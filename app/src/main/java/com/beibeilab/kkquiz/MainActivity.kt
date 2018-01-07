@@ -19,5 +19,8 @@ class MainActivity : AppCompatActivity() {
                 SearchFragment.newInstance(),
                 R.id.fragment_content
         )
+
+        val apiKey = BuildConfig.KKBOX_ACCESS_TOKEN
+
     }
 }

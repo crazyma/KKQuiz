@@ -4,6 +4,10 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -14,6 +18,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'KKBOX_ACCESS_TOKEN', localProperties['kkbox_access_token']
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -31,4 +39,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.koushikdutta.ion:ion:2.2.1'
+    implementation 'com.kkbox:openapideveloper:1.0.0'
 }

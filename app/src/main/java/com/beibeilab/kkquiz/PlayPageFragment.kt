@@ -100,7 +100,7 @@ class PlayPageFragment : Fragment() {
         }
 
         nextButton.setOnClickListener {
-            showLayout(LAYOUT_PREPARE)
+            showLayout(LAYOUT_PLAY)
         }
     }
 

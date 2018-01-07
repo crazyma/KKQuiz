@@ -7,9 +7,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.beibeilab.kkquiz.model.Track
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.SearchFetcher
+import io.reactivex.Flowable
+import io.reactivex.functions.Function
 import kotlinx.android.synthetic.main.fragment_search.*
+import com.google.gson.reflect.TypeToken
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subscribers.DisposableSubscriber
 
 
 /**
@@ -49,11 +59,43 @@ class SearchFragment : Fragment() {
 
     private fun doSearch(string: String) {
         val searchResult =
-                searchFetcher.setSearchCriteria(string,"track")
+                searchFetcher.setSearchCriteria(string, "track")
                         .fetchSearchResult(50)
                         .get()
 
-        Log.d("crazyma", "search result: $searchResult" )
+        Log.d("crazyma", "search result: $searchResult")
+
+        Flowable.just(string)
+                .subscribeOn(Schedulers.io())
+                .map {
+                    searchFetcher.setSearchCriteria(it, "track")
+                            .fetchSearchResult(50)
+                            .get()
+                }
+                .map {
+                    it.getAsJsonObject("tracks").getAsJsonArray("data").toString()
+                }
+                .map(Function<String, List<Track>> { t ->
+                    val gson = Gson()
+                    val type = object : TypeToken<List<Track>>() {}.type
+                    gson.fromJson(t, type)
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSubscriber<List<Track>>() {
+
+                    override fun onNext(trackList: List<Track>?) {
+                        Log.d("crazyma", "track " + trackList!![0].name)
+                        Log.d("crazyma", "track " + trackList!![1].name)
+                    }
+
+                    override fun onComplete() {
+
+                    }
+
+                    override fun onError(t: Throwable?) {
+
+                    }
+                })
     }
 
 }// Required empty public constructor

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import kotlinx.android.synthetic.main.fragment_play_page.*
+import java.lang.StringBuilder
 
 
 /**
@@ -16,11 +17,17 @@ import kotlinx.android.synthetic.main.fragment_play_page.*
 class PlayPageFragment : Fragment() {
 
     companion object {
-        val urlGithub = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
-        fun newInstance(): PlayPageFragment{
-            return PlayPageFragment()
+        val urlGithubSample = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
+        val urlGithub = "https://wubaibai.github.io/kkGame/?autoplay=true"
+        fun newInstance(songList: List<String>): PlayPageFragment {
+            val fragment = PlayPageFragment()
+            fragment.songList = songList
+            return fragment
         }
     }
+
+    lateinit var songList: List<String>
+    val songCount = 1
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -41,7 +48,37 @@ class PlayPageFragment : Fragment() {
     }
 
     private fun loadMusicUrl() {
-        webView.loadUrl(urlGithub)
+        webView.loadUrl(getWholeUrl(pickSongs()))
     }
+
+    private fun pickSongs(): List<String> {
+        var index1: Int
+        var index2: Int
+        val pickedSongList = ArrayList<String>()
+        do {
+            index1 = (Math.random() * songList.size).toInt()
+            index2 = -1
+            if (songCount == 2)
+                index2 = (Math.random() * songList.size).toInt()
+        } while (index1 == index2)
+
+        pickedSongList.add(songList[index1])
+        if (index2 != -1)
+            pickedSongList.add(songList[index2])
+
+        return pickedSongList
+    }
+
+    private fun getWholeUrl(pickSongList: List<String>): String {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append(urlGithub)
+        pickSongList.forEach {
+            stringBuilder.append("&song=")
+            stringBuilder.append(it)
+        }
+
+        return stringBuilder.toString()
+    }
+
 
 }// Required empty public constructor

@@ -10,8 +10,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val songList = ArrayList<String>()
+        songList.add("OseG-8qU8UtszwJlXm")
+        songList.add("4ql_l_98WUFosMGFiW")
+
         FragmentUtils.setupFragment(
-                this, PlayPageFragment.newInstance(), R.id.fragment_content
+                this, PlayPageFragment.newInstance(songList), R.id.fragment_content
         )
     }
 }

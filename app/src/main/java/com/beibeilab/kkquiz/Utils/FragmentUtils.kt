@@ -16,11 +16,20 @@ class FragmentUtils {
 
             val fragmentManager = activity.supportFragmentManager
 
-            if( fragmentManager.findFragmentById(layoutID) == null){
+            if (fragmentManager.findFragmentById(layoutID) == null) {
                 val fragmentTransaction = fragmentManager.beginTransaction()
                 fragmentTransaction.add(layoutID, fragment)
                 fragmentTransaction.commit()
             }
+        }
+
+        fun switchFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int) {
+            val fragmentManager = activity.supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+
+            fragmentTransaction.replace(layoutID, fragment)
+            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.commit()
         }
     }
 }

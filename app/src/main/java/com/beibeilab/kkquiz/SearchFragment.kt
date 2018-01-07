@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -58,12 +59,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun doSearch(string: String) {
-        val searchResult =
-                searchFetcher.setSearchCriteria(string, "track")
-                        .fetchSearchResult(50)
-                        .get()
-
-        Log.d("crazyma", "search result: $searchResult")
 
         Flowable.just(string)
                 .subscribeOn(Schedulers.io())
@@ -86,6 +81,7 @@ class SearchFragment : Fragment() {
                     override fun onNext(trackList: List<Track>?) {
                         Log.d("crazyma", "track " + trackList!![0].name)
                         Log.d("crazyma", "track " + trackList!![1].name)
+                        jump2PlayPage(trackList)
                     }
 
                     override fun onComplete() {
@@ -96,6 +92,14 @@ class SearchFragment : Fragment() {
 
                     }
                 })
+    }
+
+    private fun jump2PlayPage(trackList: List<Track>) {
+        FragmentUtils.switchFragment(
+                activity,
+                PlayPageFragment.newInstance(trackList),
+                R.id.fragment_content
+        )
     }
 
 }// Required empty public constructor

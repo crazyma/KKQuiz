@@ -35,6 +35,7 @@ class SearchFragment : Fragment() {
     }
 
     lateinit var searchFetcher: SearchFetcher
+    lateinit var searchString: String
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,8 +48,9 @@ class SearchFragment : Fragment() {
 
         setupKKboxApiClient()
         searchButton.setOnClickListener {
-            val searchString = editText.text.toString().trim()
-            doSearch(searchString)
+            searchString = editText.text.toString().trim()
+            if(searchString.isNotBlank() && searchString.isNotEmpty())
+                doSearch(searchString)
         }
     }
 
@@ -97,7 +99,7 @@ class SearchFragment : Fragment() {
     private fun jump2PlayPage(trackList: List<Track>) {
         FragmentUtils.switchFragment(
                 activity,
-                PlayPageFragment.newInstance(trackList),
+                PlayPageFragment.newInstance(searchString, trackList),
                 R.id.fragment_content
         )
     }

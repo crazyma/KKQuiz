@@ -3,6 +3,7 @@ package com.beibeilab.kkquiz
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,17 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import com.beibeilab.kkquiz.model.Album
 import com.beibeilab.kkquiz.model.Track
+import com.google.gson.Gson
+import com.kkbox.openapideveloper.api.Api
+import com.kkbox.openapideveloper.api.TrackFetcher
+import com.squareup.picasso.Picasso
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.fragment_play_page.*
 import java.lang.StringBuilder
 
@@ -26,20 +37,31 @@ class PlayPageFragment : Fragment() {
         val LAYOUT_PREPARE = 0
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
-        fun newInstance(trackList: List<Track>): PlayPageFragment {
+        fun newInstance(artist: String, trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
+            fragment.artist = artist
             fragment.trackList = trackList
             return fragment
         }
     }
 
     lateinit var trackList: List<Track>
-    val songCount = 1
+
+    lateinit var selectedTrackId: String
+    lateinit var selectedTrackName: String
+    lateinit var artist: String
+
+
+    private lateinit var trackFetcher: TrackFetcher
 
     private lateinit var webView: WebView
     private lateinit var startButton: ImageView
     private lateinit var checkAnswerButton: Button
     private lateinit var nextButton: Button
+    private lateinit var trackNameText: TextView
+    private lateinit var albumText: TextView
+    private lateinit var albumImage: ImageView
+    private lateinit var artistText: TextView
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,6 +74,9 @@ class PlayPageFragment : Fragment() {
         findViews(view!!)
         setupClickEvent()
         setupWebview()
+        setupKKBoxClint()
+
+        artistText.text = artist
     }
 
     private fun findViews(view: View) {
@@ -59,6 +84,10 @@ class PlayPageFragment : Fragment() {
         startButton = view.findViewById(R.id.buttonStart)
         checkAnswerButton = view.findViewById(R.id.buttonCheckAnswer)
         nextButton = view.findViewById(R.id.buttonNext)
+        artistText = view.findViewById(R.id.textArtist)
+        trackNameText = view.findViewById(R.id.textTrack)
+        albumText = view.findViewById(R.id.textAlbum)
+        albumImage = view.findViewById(R.id.imageAlbum)
     }
 
     private fun setupClickEvent() {
@@ -85,8 +114,26 @@ class PlayPageFragment : Fragment() {
         webView.loadUrl(urlString)
     }
 
+    private fun getSelectedTrack() {
+        val selectedIndex = (Math.random() * trackList.size).toInt()
+
+        selectedTrackId = trackList[selectedIndex].id
+        selectedTrackName = trackList[selectedIndex].name
+
+        trackNameText.text = selectedTrackName
+    }
+
+    private fun getWidgetUrl(id: String): String {
+        val stringBuilder = StringBuilder()
+        stringBuilder.append(urlGithub)
+        stringBuilder.append("&song=")
+        stringBuilder.append(id)
+
+        return stringBuilder.toString()
+    }
+
     private fun showLayout(flag: Int) {
-        when(flag){
+        when (flag) {
             LAYOUT_PREPARE -> {
                 includePrepare.visibility = View.VISIBLE
                 includePlay.visibility = View.GONE
@@ -97,7 +144,11 @@ class PlayPageFragment : Fragment() {
                 includePrepare.visibility = View.GONE
                 includePlay.visibility = View.VISIBLE
                 includeAnswer.visibility = View.GONE
-                loadMusicUrl(getWholeUrl(pickSongs()))
+
+                getSelectedTrack()
+
+                loadTrackInfo(selectedTrackId)
+                loadMusicUrl(getWidgetUrl(selectedTrackId))
             }
             LAYOUT_ANSWER -> {
                 includePrepare.visibility = View.GONE
@@ -108,34 +159,52 @@ class PlayPageFragment : Fragment() {
         }
     }
 
-    private fun pickSongs(): List<String> {
-        var index1: Int
-        var index2: Int
-        val pickedSongList = ArrayList<String>()
-        do {
-            index1 = (Math.random() * trackList.size).toInt()
-            index2 = -1
-            if (songCount == 2)
-                index2 = (Math.random() * trackList.size).toInt()
-        } while (index1 == index2)
-
-        pickedSongList.add(trackList[index1].id)
-        if (index2 != -1)
-            pickedSongList.add(trackList[index2].id)
-
-        return pickedSongList
+    private fun setupKKBoxClint() {
+        trackFetcher = Api(BuildConfig.KKBOX_ACCESS_TOKEN, "TW", context)
+                .trackFetcher
     }
 
-    private fun getWholeUrl(pickSongList: List<String>): String {
-        val stringBuilder = StringBuilder()
-        stringBuilder.append(urlGithub)
-        pickSongList.forEach {
-            stringBuilder.append("&song=")
-            stringBuilder.append(it)
-        }
+    private fun loadTrackInfo(id: String) {
+        val result = trackFetcher.setTrackId(id)
+                .fetchMetadata()
+                .get()
 
-        return stringBuilder.toString()
+        Log.d("crazyma", "result : $result")
+
+
+        Flowable.just(id)
+                .subscribeOn(Schedulers.io())
+                .map {
+                    trackFetcher.setTrackId(id)
+                            .fetchMetadata()
+                            .get()
+                }
+                .map {
+                    it.getAsJsonObject("album")
+                }
+                .map {
+                    val gson = Gson()
+                    gson.fromJson(it, Album::class.java)
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSubscriber<Album>(){
+                    override fun onNext(t: Album) {
+                        Log.d("crazyma","!!!!!! " + t.id + ", " + t.name + ", " + t.images[t.images.size - 1].url)
+
+                        albumText.text = t.name
+                        Picasso.with(this@PlayPageFragment.context)
+                                .load(t.images[t.images.size - 1].url)
+                                .into(albumImage)
+                    }
+
+                    override fun onError(t: Throwable?) {
+
+                    }
+
+                    override fun onComplete() {
+
+                    }
+                })
     }
-
 
 }// Required empty public constructor

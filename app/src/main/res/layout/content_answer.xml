@@ -34,13 +34,13 @@
         app:layout_constraintTop_toBottomOf="@+id/imageAlbum" />
 
     <TextView
-        android:id="@+id/textArtist"
+        android:id="@+id/textAlbum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="artist"
+        android:text="album"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/imageAlbum"

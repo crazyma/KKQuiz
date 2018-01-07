@@ -39,6 +39,7 @@ class PlayPageFragment : Fragment() {
     private lateinit var webView: WebView
     private lateinit var startButton: ImageView
     private lateinit var checkAnswerButton: Button
+    private lateinit var nextButton: Button
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -57,6 +58,7 @@ class PlayPageFragment : Fragment() {
         webView = view.findViewById(R.id.webView)
         startButton = view.findViewById(R.id.buttonStart)
         checkAnswerButton = view.findViewById(R.id.buttonCheckAnswer)
+        nextButton = view.findViewById(R.id.buttonNext)
     }
 
     private fun setupClickEvent() {
@@ -66,6 +68,10 @@ class PlayPageFragment : Fragment() {
 
         checkAnswerButton.setOnClickListener {
             showLayout(LAYOUT_ANSWER)
+        }
+
+        nextButton.setOnClickListener {
+            showLayout(LAYOUT_PREPARE)
         }
     }
 

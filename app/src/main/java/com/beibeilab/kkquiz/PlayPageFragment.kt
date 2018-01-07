@@ -7,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.ImageView
 import com.beibeilab.kkquiz.model.Track
 import kotlinx.android.synthetic.main.fragment_play_page.*
 import java.lang.StringBuilder
@@ -20,6 +23,9 @@ class PlayPageFragment : Fragment() {
     companion object {
         val urlGithubSample = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
         val urlGithub = "https://wubaibai.github.io/kkGame/?autoplay=true"
+        val LAYOUT_PREPARE = 0
+        val LAYOUT_PLAY = 1
+        val LAYOUT_ANSWER = 2
         fun newInstance(trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
             fragment.trackList = trackList
@@ -30,6 +36,10 @@ class PlayPageFragment : Fragment() {
     lateinit var trackList: List<Track>
     val songCount = 1
 
+    private lateinit var webView: WebView
+    private lateinit var startButton: ImageView
+    private lateinit var checkAnswerButton: Button
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -38,8 +48,25 @@ class PlayPageFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        findViews(view!!)
+        setupClickEvent()
         setupWebview()
-        loadMusicUrl()
+    }
+
+    private fun findViews(view: View) {
+        webView = view.findViewById(R.id.webView)
+        startButton = view.findViewById(R.id.buttonStart)
+        checkAnswerButton = view.findViewById(R.id.buttonCheckAnswer)
+    }
+
+    private fun setupClickEvent() {
+        startButton.setOnClickListener {
+            showLayout(LAYOUT_PLAY)
+        }
+
+        checkAnswerButton.setOnClickListener {
+            showLayout(LAYOUT_ANSWER)
+        }
     }
 
     private fun setupWebview() {
@@ -48,8 +75,31 @@ class PlayPageFragment : Fragment() {
         webView.webChromeClient = WebChromeClient()
     }
 
-    private fun loadMusicUrl() {
-        webView.loadUrl(getWholeUrl(pickSongs()))
+    private fun loadMusicUrl(urlString: String) {
+        webView.loadUrl(urlString)
+    }
+
+    private fun showLayout(flag: Int) {
+        when(flag){
+            LAYOUT_PREPARE -> {
+                includePrepare.visibility = View.VISIBLE
+                includePlay.visibility = View.GONE
+                includeAnswer.visibility = View.GONE
+                loadMusicUrl("about:blank")
+            }
+            LAYOUT_PLAY -> {
+                includePrepare.visibility = View.GONE
+                includePlay.visibility = View.VISIBLE
+                includeAnswer.visibility = View.GONE
+                loadMusicUrl(getWholeUrl(pickSongs()))
+            }
+            LAYOUT_ANSWER -> {
+                includePrepare.visibility = View.GONE
+                includePlay.visibility = View.GONE
+                includeAnswer.visibility = View.VISIBLE
+                loadMusicUrl("about:blank")
+            }
+        }
     }
 
     private fun pickSongs(): List<String> {

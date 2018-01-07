@@ -6,4 +6,7 @@
 
     <string name="search_placeholder">name a signer</string>
     <string name="search_commit">GO</string>
+
+    <string name="play_prepare_message">要開始囉</string>
+    <string name="play_check_answer">對答案</string>
 </resources>

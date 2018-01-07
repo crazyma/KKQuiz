@@ -15,7 +15,9 @@ class MainActivity : AppCompatActivity() {
         songList.add("4ql_l_98WUFosMGFiW")
 
         FragmentUtils.setupFragment(
-                this, PlayPageFragment.newInstance(songList), R.id.fragment_content
+                this,
+                SearchFragment.newInstance(),
+                R.id.fragment_content
         )
     }
 }

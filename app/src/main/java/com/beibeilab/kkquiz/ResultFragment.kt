@@ -36,7 +36,6 @@ class ResultFragment : Fragment() {
 
         textArtist.text = artist
         buttonPlayAgain.setOnClickListener {
-
             FragmentUtils.backFragment(
                     this@ResultFragment.activity,
                     FragmentUtils.FRAGMENT_TAG_SEARCH)

@@ -46,10 +46,13 @@ class PlayPageFragment : Fragment() {
         }
     }
 
+    private val totalTrackNumber = 2
+    private var index = 0
+
     lateinit var trackList: List<Track>
 
-    lateinit var selectedTrackId: String
-    lateinit var selectedTrackName: String
+    private lateinit var selectedTrackId: String
+    private lateinit var selectedTrackName: String
     lateinit var artist: String
 
 
@@ -101,12 +104,16 @@ class PlayPageFragment : Fragment() {
         }
 
         nextButton.setOnClickListener {
-//            showLayout(LAYOUT_PLAY)
-            FragmentUtils.switchFragment(
-                    this@PlayPageFragment.activity,
-                    ResultFragment.newInstance("XD"),
-                    R.id.fragment_content,
-                    FragmentUtils.FRAGMENT_TAG_PLAY)
+
+            if(index++ < totalTrackNumber){
+                showLayout(LAYOUT_PLAY)
+            }else {
+                FragmentUtils.switchFragment(
+                        this@PlayPageFragment.activity,
+                        ResultFragment.newInstance(artist),
+                        R.id.fragment_content,
+                        FragmentUtils.FRAGMENT_TAG_PLAY)
+            }
         }
 
     }

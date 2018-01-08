@@ -39,7 +39,7 @@ class FragmentUtils {
 
         fun backFragment(activity: FragmentActivity, tag: String){
             val fm = activity.supportFragmentManager
-            fm.popBackStackImmediate("Search", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            fm.popBackStackImmediate(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
 
         fun clearAllStack(activity: FragmentActivity) {

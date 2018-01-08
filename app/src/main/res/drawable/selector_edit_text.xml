@@ -3,7 +3,7 @@
     <!-- pressed -->
     <!-- focused -->
     <!-- default -->
-    <item android:state_pressed="true" android:drawable="@android:color/white" />
-    <item android:state_focused="true" android:drawable="@android:color/white" />
-    <item android:drawable="@color/colorPlaceholder" />
+    <item android:state_pressed="true" android:drawable="@drawable/btn_white" />
+    <item android:state_focused="true" android:drawable="@drawable/btn_white" />
+    <item android:drawable="@drawable/btn_gray" />
 </selector>

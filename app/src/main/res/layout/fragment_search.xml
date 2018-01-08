@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/button_search_commit"
+        android:background="@drawable/button_pink"
         android:text="GO"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="@+id/editText"

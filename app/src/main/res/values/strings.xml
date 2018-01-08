@@ -13,4 +13,6 @@
     <string name="play_asking">這是什麼歌？</string>
     <string name="play_listen_again">再聽一次</string>
     <string name="play_next">下一題</string>
+    <string name="result_title">挑戰結束</string>
+    <string name="result_play_again">重新挑戰</string>
 </resources>

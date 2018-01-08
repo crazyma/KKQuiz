@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Album
 import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
@@ -100,8 +101,14 @@ class PlayPageFragment : Fragment() {
         }
 
         nextButton.setOnClickListener {
-            showLayout(LAYOUT_PLAY)
+//            showLayout(LAYOUT_PLAY)
+            FragmentUtils.switchFragment(
+                    this@PlayPageFragment.activity,
+                    ResultFragment.newInstance("XD"),
+                    R.id.fragment_content,
+                    FragmentUtils.FRAGMENT_TAG_PLAY)
         }
+
     }
 
     private fun setupWebview() {

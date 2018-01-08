@@ -2,6 +2,7 @@ package com.beibeilab.kkquiz.Utils
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
 
 /**
  * Created by david on 2018/1/7.
@@ -11,6 +12,10 @@ import android.support.v4.app.FragmentActivity
 
 class FragmentUtils {
     companion object {
+        val FRAGMENT_TAG_SEARCH = "search"
+        val FRAGMENT_TAG_PLAY = "play"
+        val FRAGMENT_TAG_RESULT = "result"
+
         fun setupFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int) {
             // TODO("Think about how to improve this class by Dagger2")
 
@@ -23,13 +28,27 @@ class FragmentUtils {
             }
         }
 
-        fun switchFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int) {
+        fun switchFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int, backStackName: String? = null) {
             val fragmentManager = activity.supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
 
             fragmentTransaction.replace(layoutID, fragment)
-            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.addToBackStack(backStackName)
             fragmentTransaction.commit()
+        }
+
+        fun backFragment(activity: FragmentActivity, tag: String){
+            val fm = activity.supportFragmentManager
+            fm.popBackStackImmediate("Search", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+
+        fun clearAllStack(activity: FragmentActivity) {
+            val fm = activity.supportFragmentManager
+            val backStackCount = fm.backStackEntryCount
+            for (i in 0 until backStackCount) {
+                val backStackId = fm.getBackStackEntryAt(i).id
+                fm.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
         }
     }
 }

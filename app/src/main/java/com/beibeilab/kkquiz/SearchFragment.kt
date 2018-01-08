@@ -100,7 +100,8 @@ class SearchFragment : Fragment() {
         FragmentUtils.switchFragment(
                 activity,
                 PlayPageFragment.newInstance(searchString, trackList),
-                R.id.fragment_content
+                R.id.fragment_content,
+                FragmentUtils.FRAGMENT_TAG_SEARCH
         )
     }
 

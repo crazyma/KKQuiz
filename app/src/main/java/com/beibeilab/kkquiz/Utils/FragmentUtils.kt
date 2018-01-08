@@ -37,9 +37,14 @@ class FragmentUtils {
             fragmentTransaction.commit()
         }
 
-        fun backFragment(activity: FragmentActivity, tag: String){
+        fun backFragment(activity: FragmentActivity, tag: String) {
             val fm = activity.supportFragmentManager
             fm.popBackStackImmediate(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+
+        fun getCurrnetFragment(activity: FragmentActivity, id: Int): Fragment {
+            val fm = activity.supportFragmentManager
+            return fm.findFragmentById(id)
         }
 
         fun clearAllStack(activity: FragmentActivity) {

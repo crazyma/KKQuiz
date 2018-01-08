@@ -23,4 +23,15 @@ class MainActivity : AppCompatActivity() {
         val apiKey = BuildConfig.KKBOX_ACCESS_TOKEN
 
     }
+
+    override fun onBackPressed() {
+        val fragment = FragmentUtils.getCurrnetFragment(this, R.id.fragment_content)
+
+        if (fragment is ResultFragment) {
+            FragmentUtils.backFragment(
+                    this, FragmentUtils.FRAGMENT_TAG_SEARCH)
+        }else{
+            super.onBackPressed()
+        }
+    }
 }

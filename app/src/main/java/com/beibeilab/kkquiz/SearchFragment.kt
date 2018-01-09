@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.beibeilab.kkquiz.Utils.FragmentUtils
+import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -21,6 +22,7 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
+import org.json.JSONObject
 
 
 /**
@@ -65,35 +67,68 @@ class SearchFragment : Fragment() {
         Flowable.just(string)
                 .subscribeOn(Schedulers.io())
                 .map {
-                    searchFetcher.setSearchCriteria(it, "track")
-                            .fetchSearchResult(50)
+                    searchFetcher.setSearchCriteria(it, "artist")
+                            .fetchSearchResult(1)
                             .get()
                 }
                 .map {
-                    it.getAsJsonObject("tracks").getAsJsonArray("data").toString()
+                    it.getAsJsonObject("artists")
+                            .getAsJsonArray("data")[0]
+                            .toString()
                 }
-                .map(Function<String, List<Track>> { t ->
+                .map {
                     val gson = Gson()
-                    val type = object : TypeToken<List<Track>>() {}.type
-                    gson.fromJson(t, type)
-                })
+                    gson.fromJson(it, Artist::class.java)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSubscriber<List<Track>>() {
+                .subscribeWith(object : DisposableSubscriber<Artist>() {
+                    override fun onNext(artist: Artist) {
+                        Log.d("crazyma","!!!!!!!  " + artist.id + " " + artist.name + " " + artist.images.last().url)
+                    }
 
-                    override fun onNext(trackList: List<Track>?) {
-                        Log.d("crazyma", "track " + trackList!![0].name)
-                        Log.d("crazyma", "track " + trackList!![1].name)
-                        jump2PlayPage(trackList)
+                    override fun onError(t: Throwable) {
+
                     }
 
                     override fun onComplete() {
 
                     }
 
-                    override fun onError(t: Throwable?) {
-
-                    }
                 })
+
+
+//        Flowable.just(string)
+//                .subscribeOn(Schedulers.io())
+//                .map {
+//                    searchFetcher.setSearchCriteria(it, "track")
+//                            .fetchSearchResult(50)
+//                            .get()
+//                }
+//                .map {
+//                    it.getAsJsonObject("tracks").getAsJsonArray("data").toString()
+//                }
+//                .map(Function<String, List<Track>> { t ->
+//                    val gson = Gson()
+//                    val type = object : TypeToken<List<Track>>() {}.type
+//                    gson.fromJson(t, type)
+//                })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeWith(object : DisposableSubscriber<List<Track>>() {
+//
+//                    override fun onNext(trackList: List<Track>?) {
+//                        Log.d("crazyma", "track " + trackList!![0].name)
+//                        Log.d("crazyma", "track " + trackList!![1].name)
+//                        jump2PlayPage(trackList)
+//                    }
+//
+//                    override fun onComplete() {
+//
+//                    }
+//
+//                    override fun onError(t: Throwable?) {
+//
+//                    }
+//                })
     }
 
     private fun jump2PlayPage(trackList: List<Track>) {

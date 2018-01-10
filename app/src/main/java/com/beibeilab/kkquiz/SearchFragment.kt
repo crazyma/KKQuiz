@@ -168,13 +168,13 @@ class SearchFragment : Fragment() {
     }
 
 
-    private fun jump2PlayPage(trackList: List<Track>) {
-        FragmentUtils.switchFragment(
-                activity,
-                PlayPageFragment.newInstance(searchString, trackList),
-                R.id.fragment_content,
-                FragmentUtils.FRAGMENT_TAG_SEARCH
-        )
-    }
+//    private fun jump2PlayPage(trackList: List<Track>) {
+//        FragmentUtils.switchFragment(
+//                activity,
+//                PlayPageFragment.newInstance(trackList),
+//                R.id.fragment_content,
+//                FragmentUtils.FRAGMENT_TAG_SEARCH
+//        )
+//    }
 
 }// Required empty public constructor

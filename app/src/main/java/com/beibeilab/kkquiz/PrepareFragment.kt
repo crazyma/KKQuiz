@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.beibeilab.kkquiz.model.Artist
+import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.SearchFetcher
 import com.squareup.picasso.Picasso
@@ -16,6 +18,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.fragment_prepare.*
+import com.beibeilab.kkquiz.Utils.FragmentUtils
+import io.reactivex.observers.DisposableSingleObserver
 
 
 /**
@@ -26,13 +30,14 @@ class PrepareFragment : Fragment() {
     companion object {
         fun newInstance(searchString: String): PrepareFragment{
             val fragment = PrepareFragment()
-            fragment.searchString = searchString
+            fragment.searchArtistString = searchString
             return fragment
         }
     }
 
     lateinit var searchFetcher: SearchFetcher
-    private lateinit var searchString: String
+    private lateinit var searchArtistString: String
+    private lateinit var trackList: List<Track>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,7 +47,10 @@ class PrepareFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupKKboxApiClient()
-        searchArtist(searchString)
+        searchArtist(searchArtistString)
+        buttonStart.setOnClickListener{
+            jump2PlayPage()
+        }
     }
 
     private fun setupKKboxApiClient() {
@@ -51,9 +59,9 @@ class PrepareFragment : Fragment() {
         searchFetcher = api.searchFetcher
     }
 
-    private fun searchArtist(string: String) {
+    private fun searchArtist(artistString: String) {
 
-        Flowable.just(string)
+        Flowable.just(artistString)
                 .subscribeOn(Schedulers.io())
                 .map {
                     searchFetcher.setSearchCriteria(it, "artist")
@@ -73,6 +81,7 @@ class PrepareFragment : Fragment() {
                 .subscribeWith(object : DisposableSubscriber<Artist>() {
                     override fun onNext(artist: Artist) {
                         setupArtist(artist)
+                        searchTracks(artist)
                     }
 
                     override fun onError(t: Throwable) {
@@ -84,6 +93,52 @@ class PrepareFragment : Fragment() {
                     }
 
                 })
+    }
+
+    private fun searchTracks(artist: Artist){
+        Flowable.just(artist.name)
+                .subscribeOn(Schedulers.io())
+                .map {
+                    searchFetcher.setSearchCriteria(it, "track")
+                            .fetchSearchResult(50)
+                            .get()
+                }
+                .map {
+                    it.getAsJsonObject("tracks")
+                            .getAsJsonArray("data")
+                            .toString()
+                }
+                .map{
+                    val gson = Gson()
+                    gson.fromJson<List<Track>>(it, object : TypeToken<List<Track>>() {}.type)
+                }
+                .flatMap {
+                    Flowable.fromIterable(it)
+                }
+                .filter {
+                    it.album.artist.id == artist.id
+                }
+                .toList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
+                    override fun onSuccess(list: List<Track>) {
+                        trackList = list
+                    }
+
+                    override fun onError(e: Throwable) {
+
+                    }
+                })
+
+    }
+
+    private fun jump2PlayPage() {
+        FragmentUtils.switchFragment(
+                activity,
+                PlayPageFragment.newInstance(trackList),
+                R.id.fragment_content,
+                FragmentUtils.FRAGMENT_TAG_SEARCH
+        )
     }
 
     private fun setupArtist(artist: Artist) {

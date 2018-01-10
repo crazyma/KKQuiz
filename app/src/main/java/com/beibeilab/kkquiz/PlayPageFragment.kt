@@ -38,9 +38,8 @@ class PlayPageFragment : Fragment() {
         val LAYOUT_PREPARE = 0
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
-        fun newInstance(artist: String, trackList: List<Track>): PlayPageFragment {
+        fun newInstance(trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
-            fragment.artist = artist
             fragment.trackList = trackList
             return fragment
         }

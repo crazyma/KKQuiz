@@ -6,16 +6,9 @@
     tools:context="com.beibeilab.kkquiz.PlayPageFragment">
 
     <include
-        android:id="@+id/includePrepare"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/fragment_prepare"/>
-
-    <include
         android:id="@+id/includePlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         layout="@layout/content_play"/>
 
     <include

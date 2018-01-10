@@ -35,36 +35,33 @@ class PlayPageFragment : Fragment() {
     companion object {
         val urlGithubSample = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
         val urlGithub = "https://wubaibai.github.io/kkGame/?autoplay=true"
-        val LAYOUT_PREPARE = 0
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
-        fun newInstance(trackList: List<Track>): PlayPageFragment {
+        fun newInstance(artistString: String,trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
             fragment.trackList = trackList
+            fragment.artistString = artistString
             return fragment
         }
     }
 
-    private val totalTrackNumber = 2
     private var index = 0
 
     lateinit var trackList: List<Track>
 
     private lateinit var selectedTrackId: String
     private lateinit var selectedTrackName: String
-    lateinit var artist: String
+    lateinit var artistString: String
 
 
     private lateinit var trackFetcher: TrackFetcher
 
     private lateinit var webView: WebView
-    private lateinit var startButton: ImageView
     private lateinit var checkAnswerButton: Button
     private lateinit var nextButton: Button
     private lateinit var trackNameText: TextView
     private lateinit var albumText: TextView
     private lateinit var albumImage: ImageView
-    private lateinit var artistText: TextView
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -79,24 +76,19 @@ class PlayPageFragment : Fragment() {
         setupWebview()
         setupKKBoxClint()
 
-        artistText.text = artist
+        showLayout(LAYOUT_PLAY)
     }
 
     private fun findViews(view: View) {
         webView = view.findViewById(R.id.webView)
-        startButton = view.findViewById(R.id.buttonStart)
         checkAnswerButton = view.findViewById(R.id.buttonCheckAnswer)
         nextButton = view.findViewById(R.id.buttonNext)
-        artistText = view.findViewById(R.id.textArtist)
         trackNameText = view.findViewById(R.id.textTrack)
         albumText = view.findViewById(R.id.textAlbum)
         albumImage = view.findViewById(R.id.imageAlbum)
     }
 
     private fun setupClickEvent() {
-        startButton.setOnClickListener {
-            showLayout(LAYOUT_PLAY)
-        }
 
         checkAnswerButton.setOnClickListener {
             showLayout(LAYOUT_ANSWER)
@@ -104,12 +96,12 @@ class PlayPageFragment : Fragment() {
 
         nextButton.setOnClickListener {
 
-            if(index++ < totalTrackNumber){
+            if(index < trackList.size){
                 showLayout(LAYOUT_PLAY)
             }else {
                 FragmentUtils.switchFragment(
                         this@PlayPageFragment.activity,
-                        ResultFragment.newInstance(artist),
+                        ResultFragment.newInstance(artistString),
                         R.id.fragment_content,
                         FragmentUtils.FRAGMENT_TAG_PLAY)
             }
@@ -127,11 +119,9 @@ class PlayPageFragment : Fragment() {
         webView.loadUrl(urlString)
     }
 
-    private fun getSelectedTrack() {
-        val selectedIndex = (Math.random() * trackList.size).toInt()
-
-        selectedTrackId = trackList[selectedIndex].id
-        selectedTrackName = trackList[selectedIndex].name
+    private fun getSelectedTrack(index: Int) {
+        selectedTrackId = trackList[index].id
+        selectedTrackName = trackList[index].name
 
         trackNameText.text = selectedTrackName
     }
@@ -147,24 +137,16 @@ class PlayPageFragment : Fragment() {
 
     private fun showLayout(flag: Int) {
         when (flag) {
-            LAYOUT_PREPARE -> {
-                includePrepare.visibility = View.VISIBLE
-                includePlay.visibility = View.GONE
-                includeAnswer.visibility = View.GONE
-                loadMusicUrl("about:blank")
-            }
             LAYOUT_PLAY -> {
-                includePrepare.visibility = View.GONE
                 includePlay.visibility = View.VISIBLE
                 includeAnswer.visibility = View.GONE
 
-                getSelectedTrack()
+                getSelectedTrack(index++)
 
                 loadTrackInfo(selectedTrackId)
                 loadMusicUrl(getWidgetUrl(selectedTrackId))
             }
             LAYOUT_ANSWER -> {
-                includePrepare.visibility = View.GONE
                 includePlay.visibility = View.GONE
                 includeAnswer.visibility = View.VISIBLE
                 loadMusicUrl("about:blank")

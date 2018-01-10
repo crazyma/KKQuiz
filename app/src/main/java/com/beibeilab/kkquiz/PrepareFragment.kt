@@ -35,6 +35,8 @@ class PrepareFragment : Fragment() {
             fragment.searchArtistString = searchString
             return fragment
         }
+
+        val LOOP_COUNT:Long = 5
     }
 
     lateinit var searchFetcher: SearchFetcher
@@ -124,12 +126,13 @@ class PrepareFragment : Fragment() {
                 .filter {
                     it.album.artist.id == artist.id
                 }
-                .take(5)
+                .take(PrepareFragment.LOOP_COUNT)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
+                        Log.d("crazyma","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     }
 
                     override fun onError(e: Throwable) {
@@ -143,9 +146,9 @@ class PrepareFragment : Fragment() {
     private fun jump2PlayPage() {
         FragmentUtils.switchFragment(
                 activity,
-                PlayPageFragment.newInstance(trackList),
+                PlayPageFragment.newInstance(searchArtistString, trackList),
                 R.id.fragment_content,
-                FragmentUtils.FRAGMENT_TAG_SEARCH
+                FragmentUtils.FRAGMENT_TAG_PREPARE
         )
     }
 

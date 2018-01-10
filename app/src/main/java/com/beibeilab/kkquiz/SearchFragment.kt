@@ -163,7 +163,7 @@ class SearchFragment : Fragment() {
                 activity,
                 PrepareFragment.newInstance(searchString),
                 R.id.fragment_content,
-                FragmentUtils.FRAGMENT_TAG_PREPARE
+                FragmentUtils.FRAGMENT_TAG_SEARCH
         )
     }
 

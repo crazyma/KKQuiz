@@ -13,7 +13,7 @@
 
     <include
         android:id="@+id/includePrepare"
-        layout="@layout/content_prepare"
+        layout="@layout/fragment_prepare"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

@@ -58,7 +58,7 @@ class SearchFragment : Fragment() {
         searchButton.setOnClickListener {
             searchString = editText.text.toString().trim()
             if (searchString.isNotBlank() && searchString.isNotEmpty())
-                doSearch(searchString)
+                jump2PreparePage(searchString)
         }
     }
 
@@ -156,6 +156,15 @@ class SearchFragment : Fragment() {
         Picasso.with(context)
                 .load(artist.images.last().url)
                 .into(artistImage)
+    }
+
+    private fun jump2PreparePage(searchString: String){
+        FragmentUtils.switchFragment(
+                activity,
+                PrepareFragment.newInstance(searchString),
+                R.id.fragment_content,
+                FragmentUtils.FRAGMENT_TAG_PREPARE
+        )
     }
 
 

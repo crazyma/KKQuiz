@@ -14,6 +14,7 @@ class FragmentUtils {
     companion object {
         val FRAGMENT_TAG_SEARCH = "search"
         val FRAGMENT_TAG_PLAY = "play"
+        val FRAGMENT_TAG_PREPARE = "prepare"
         val FRAGMENT_TAG_RESULT = "result"
 
         fun setupFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int) {

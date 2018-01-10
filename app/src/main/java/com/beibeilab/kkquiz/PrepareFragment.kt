@@ -3,6 +3,7 @@ package com.beibeilab.kkquiz
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.fragment_prepare.*
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import io.reactivex.observers.DisposableSingleObserver
+import java.util.*
 
 
 /**
@@ -112,12 +114,17 @@ class PrepareFragment : Fragment() {
                     val gson = Gson()
                     gson.fromJson<List<Track>>(it, object : TypeToken<List<Track>>() {}.type)
                 }
+                .map{
+                    Collections.shuffle(it)
+                    it
+                }
                 .flatMap {
                     Flowable.fromIterable(it)
                 }
                 .filter {
                     it.album.artist.id == artist.id
                 }
+                .take(5)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
@@ -128,6 +135,7 @@ class PrepareFragment : Fragment() {
                     override fun onError(e: Throwable) {
 
                     }
+
                 })
 
     }

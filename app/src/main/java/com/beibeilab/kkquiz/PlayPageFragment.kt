@@ -1,6 +1,7 @@
 package com.beibeilab.kkquiz
 
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -15,6 +16,8 @@ import android.widget.TextView
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Album
 import com.beibeilab.kkquiz.model.Track
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import com.google.gson.Gson
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.TrackFetcher
@@ -35,9 +38,10 @@ class PlayPageFragment : Fragment() {
     companion object {
         val urlGithubSample = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
         val urlGithub = "https://wubaibai.github.io/kkGame/?autoplay=true"
+        val BLANK_PAGE = "about:blank"
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
-        fun newInstance(artistString: String,trackList: List<Track>): PlayPageFragment {
+        fun newInstance(artistString: String, trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
             fragment.trackList = trackList
             fragment.artistString = artistString
@@ -55,6 +59,8 @@ class PlayPageFragment : Fragment() {
 
 
     private lateinit var trackFetcher: TrackFetcher
+    private lateinit var leftYoyo: YoYo.YoYoString
+    private lateinit var rightYoyo: YoYo.YoYoString
 
     private lateinit var webView: WebView
     private lateinit var checkAnswerButton: Button
@@ -62,6 +68,8 @@ class PlayPageFragment : Fragment() {
     private lateinit var trackNameText: TextView
     private lateinit var albumText: TextView
     private lateinit var albumImage: ImageView
+    private lateinit var leftRippleImage: ImageView
+    private lateinit var rightRippleImage: ImageView
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -86,6 +94,8 @@ class PlayPageFragment : Fragment() {
         trackNameText = view.findViewById(R.id.textTrack)
         albumText = view.findViewById(R.id.textAlbum)
         albumImage = view.findViewById(R.id.imageAlbum)
+        leftRippleImage = view.findViewById(R.id.imageLeftRipple)
+        rightRippleImage = view.findViewById(R.id.imageRightRipple)
     }
 
     private fun setupClickEvent() {
@@ -96,9 +106,9 @@ class PlayPageFragment : Fragment() {
 
         nextButton.setOnClickListener {
 
-            if(index < trackList.size){
+            if (index < trackList.size) {
                 showLayout(LAYOUT_PLAY)
-            }else {
+            } else {
                 FragmentUtils.switchFragment(
                         this@PlayPageFragment.activity,
                         ResultFragment.newInstance(artistString),
@@ -117,6 +127,25 @@ class PlayPageFragment : Fragment() {
 
     private fun loadMusicUrl(urlString: String) {
         webView.loadUrl(urlString)
+
+        if (urlString == BLANK_PAGE) {
+            leftYoyo.stop()
+            rightYoyo.stop()
+        } else {
+            leftYoyo = YoYo.with(Techniques.Pulse)
+                    .duration(600)
+                    .delay(300)
+                    .repeat(ValueAnimator.INFINITE)
+                    .playOn(leftRippleImage)
+
+            rightYoyo = YoYo.with(Techniques.Pulse)
+                    .duration(600)
+                    .delay(150)
+                    .repeat(ValueAnimator.INFINITE)
+                    .playOn(rightRippleImage)
+        }
+
+
     }
 
     private fun getSelectedTrack(index: Int) {
@@ -149,7 +178,7 @@ class PlayPageFragment : Fragment() {
             LAYOUT_ANSWER -> {
                 includePlay.visibility = View.GONE
                 includeAnswer.visibility = View.VISIBLE
-                loadMusicUrl("about:blank")
+                loadMusicUrl(BLANK_PAGE)
             }
         }
     }
@@ -182,7 +211,7 @@ class PlayPageFragment : Fragment() {
                     gson.fromJson(it, Album::class.java)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSubscriber<Album>(){
+                .subscribeWith(object : DisposableSubscriber<Album>() {
                     override fun onNext(t: Album) {
                         albumText.text = t.name
                         Picasso.with(this@PlayPageFragment.context)

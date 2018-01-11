@@ -89,6 +89,7 @@ class PrepareFragment : DisposableFragment() {
 
     private fun searchTracks(artist: Artist) {
         progressBar.visibility = View.VISIBLE
+        textProgress.visibility = View.VISIBLE
         val disposable = Flowable.just(artist.name)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -122,14 +123,14 @@ class PrepareFragment : DisposableFragment() {
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
                         progressBar.visibility = View.GONE
+                        textProgress.visibility = View.GONE
                         setupButtonEvent()
                     }
 
                     override fun onError(e: Throwable) {
                         Toast.makeText(this@PrepareFragment.context, "出現錯誤", Toast.LENGTH_LONG).show()
-                        progressBar.visibility = View.VISIBLE
-                        buttonStart.isClickable = false
-                        buttonStart.isEnabled = false
+                        progressBar.visibility = View.GONE
+                        textProgress.visibility = View.GONE
                     }
 
                 })

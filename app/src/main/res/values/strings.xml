@@ -7,8 +7,9 @@
     <string name="search_placeholder">name a signer</string>
     <string name="search_commit">GO</string>
 
-    <string name="play_prepare_message">要開始挑戰了嗎？</string>
-    <string name="play_prepare_target">挑戰目標</string>
+    <string name="prepare_message">要開始挑戰了嗎？</string>
+    <string name="prepare_progress_message">準備中</string>
+    <string name="prepare_target">挑戰目標</string>
     <string name="play_check_answer">對答案</string>
     <string name="play_asking">這是什麼歌？</string>
     <string name="play_listen_again">再聽一次</string>

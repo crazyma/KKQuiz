@@ -27,10 +27,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="title"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageAlbum"
-        app:layout_constraintStart_toStartOf="@+id/imageAlbum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageAlbum" />
 
     <TextView
@@ -41,10 +42,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="album"
+        android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageAlbum"
-        app:layout_constraintStart_toStartOf="@+id/imageAlbum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textTrack" />
 
     <Button

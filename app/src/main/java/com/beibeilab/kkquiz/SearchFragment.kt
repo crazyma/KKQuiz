@@ -94,12 +94,12 @@ class SearchFragment : DisposableFragment() {
                     override fun onError(t: Throwable) {
                         Toast.makeText(this@SearchFragment.context, "找不到結果", Toast.LENGTH_LONG).show()
                         searchButton.isClickable = true
-                        progressBar.visibility = View.GONE
+                        progressBar!!.visibility = View.GONE
                     }
 
                     override fun onComplete() {
                         searchButton.isClickable = true
-                        progressBar.visibility = View.GONE
+                        progressBar!!.visibility = View.GONE
                     }
 
                 })
@@ -108,8 +108,9 @@ class SearchFragment : DisposableFragment() {
     }
 
     private fun jump2PreparePage(artist: Artist) {
-        FragmentUtils.switchFragment(
+        FragmentUtils.switchFragmentWithFade(
                 activity,
+                this,
                 PrepareFragment.newInstance(artist),
                 R.id.fragment_content,
                 FragmentUtils.FRAGMENT_TAG_SEARCH

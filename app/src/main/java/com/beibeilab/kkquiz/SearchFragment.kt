@@ -7,10 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
@@ -41,8 +38,6 @@ class SearchFragment : Fragment() {
 
     private lateinit var searchButton: Button
     private lateinit var editText: EditText
-    private lateinit var artistText: TextView
-    private lateinit var artistImage: ImageView
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -58,15 +53,13 @@ class SearchFragment : Fragment() {
         searchButton.setOnClickListener {
             searchString = editText.text.toString().trim()
             if (searchString.isNotBlank() && searchString.isNotEmpty())
-                jump2PreparePage(searchString)
+                searchArtist(searchString)
         }
     }
 
     private fun findViews(view: View) {
         searchButton = view.findViewById(R.id.searchButton)
         editText = view.findViewById(R.id.editText)
-        artistText = view.findViewById(R.id.textArtist)
-        artistImage = view.findViewById(R.id.imageArtist)
     }
 
     private fun setupKKboxApiClient() {
@@ -75,8 +68,8 @@ class SearchFragment : Fragment() {
         searchFetcher = api.searchFetcher
     }
 
-    private fun doSearch(string: String) {
-
+    private fun searchArtist(string: String) {
+        searchButton.isClickable = false
         Flowable.just(string)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -97,16 +90,16 @@ class SearchFragment : Fragment() {
                 .subscribeWith(object : DisposableSubscriber<Artist>() {
                     override fun onNext(artist: Artist) {
                         Log.d("crazyma", "!!!!!!!  " + artist.id + " " + artist.name + " " + artist.images.last().url)
-                        showLayout()
-                        setupArtist(artist)
+                        jump2PreparePage(artist)
                     }
 
                     override fun onError(t: Throwable) {
-
+                        Toast.makeText(this@SearchFragment.context, "找不到結果", Toast.LENGTH_LONG).show()
+                        searchButton.isClickable = true
                     }
 
                     override fun onComplete() {
-
+                        searchButton.isClickable = true
                     }
 
                 })
@@ -146,35 +139,20 @@ class SearchFragment : Fragment() {
 //                })
     }
 
-    private fun showLayout() {
-        includeSearch.visibility = View.GONE
-        includePrepare.visibility = View.VISIBLE
-    }
+//    private fun setupArtist(artist: Artist) {
+//        artistText.text = artist.name
+//        Picasso.with(context)
+//                .load(artist.images.last().url)
+//                .into(artistImage)
+//    }
 
-    private fun setupArtist(artist: Artist) {
-        artistText.text = artist.name
-        Picasso.with(context)
-                .load(artist.images.last().url)
-                .into(artistImage)
-    }
-
-    private fun jump2PreparePage(searchString: String){
+    private fun jump2PreparePage(artist: Artist){
         FragmentUtils.switchFragment(
                 activity,
-                PrepareFragment.newInstance(searchString),
+                PrepareFragment.newInstance(artist),
                 R.id.fragment_content,
                 FragmentUtils.FRAGMENT_TAG_SEARCH
         )
     }
-
-
-//    private fun jump2PlayPage(trackList: List<Track>) {
-//        FragmentUtils.switchFragment(
-//                activity,
-//                PlayPageFragment.newInstance(trackList),
-//                R.id.fragment_content,
-//                FragmentUtils.FRAGMENT_TAG_SEARCH
-//        )
-//    }
 
 }// Required empty public constructor

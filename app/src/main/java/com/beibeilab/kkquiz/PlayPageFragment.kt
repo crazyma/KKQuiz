@@ -184,8 +184,6 @@ class PlayPageFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSubscriber<Album>(){
                     override fun onNext(t: Album) {
-                        Log.d("crazyma","!!!!!! " + t.id + ", " + t.name + ", " + t.images[t.images.size - 1].url)
-
                         albumText.text = t.name
                         Picasso.with(this@PlayPageFragment.context)
                                 .load(t.images[t.images.size - 1].url)

@@ -30,9 +30,9 @@ import java.util.*
 class PrepareFragment : Fragment() {
 
     companion object {
-        fun newInstance(searchString: String): PrepareFragment{
+        fun newInstance(artist: Artist): PrepareFragment{
             val fragment = PrepareFragment()
-            fragment.searchArtistString = searchString
+            fragment.artist = artist
             return fragment
         }
 
@@ -40,7 +40,7 @@ class PrepareFragment : Fragment() {
     }
 
     lateinit var searchFetcher: SearchFetcher
-    private lateinit var searchArtistString: String
+    private lateinit var artist: Artist
     private lateinit var trackList: List<Track>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -51,7 +51,8 @@ class PrepareFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupKKboxApiClient()
-        searchArtist(searchArtistString)
+        setupArtist(artist)
+        searchTracks(artist)
         buttonStart.setOnClickListener{
             jump2PlayPage()
         }
@@ -132,7 +133,6 @@ class PrepareFragment : Fragment() {
                 .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
-                        Log.d("crazyma","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     }
 
                     override fun onError(e: Throwable) {
@@ -146,7 +146,7 @@ class PrepareFragment : Fragment() {
     private fun jump2PlayPage() {
         FragmentUtils.switchFragment(
                 activity,
-                PlayPageFragment.newInstance(searchArtistString, trackList),
+                PlayPageFragment.newInstance(artist.name, trackList),
                 R.id.fragment_content,
                 FragmentUtils.FRAGMENT_TAG_PREPARE
         )

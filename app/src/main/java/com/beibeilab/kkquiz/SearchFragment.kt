@@ -10,16 +10,14 @@ import android.view.ViewGroup
 import android.widget.*
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Artist
-import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.SearchFetcher
-import com.squareup.picasso.Picasso
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
-import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.content_search.*
 
 
 /**
@@ -70,6 +68,7 @@ class SearchFragment : Fragment() {
 
     private fun searchArtist(string: String) {
         searchButton.isClickable = false
+        progressBar.visibility = View.VISIBLE
         Flowable.just(string)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -96,10 +95,12 @@ class SearchFragment : Fragment() {
                     override fun onError(t: Throwable) {
                         Toast.makeText(this@SearchFragment.context, "找不到結果", Toast.LENGTH_LONG).show()
                         searchButton.isClickable = true
+                        progressBar.visibility = View.GONE
                     }
 
                     override fun onComplete() {
                         searchButton.isClickable = true
+                        progressBar.visibility = View.GONE
                     }
 
                 })

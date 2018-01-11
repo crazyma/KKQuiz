@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
     <EditText
         android:id="@+id/editText"
@@ -54,5 +56,23 @@
         android:src="@drawable/ic_icon_note"
         app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:elevation="4dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@android:color/white"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/searchButton"
+        app:layout_constraintEnd_toEndOf="@+id/searchButton"
+        app:layout_constraintTop_toTopOf="@+id/searchButton"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

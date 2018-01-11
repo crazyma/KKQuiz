@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
 import com.google.gson.Gson
@@ -64,43 +65,8 @@ class PrepareFragment : Fragment() {
         searchFetcher = api.searchFetcher
     }
 
-    private fun searchArtist(artistString: String) {
-
-        Flowable.just(artistString)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    searchFetcher.setSearchCriteria(it, "artist")
-                            .fetchSearchResult(1)
-                            .get()
-                }
-                .map {
-                    it.getAsJsonObject("artists")
-                            .getAsJsonArray("data")[0]
-                            .toString()
-                }
-                .map {
-                    val gson = Gson()
-                    gson.fromJson(it, Artist::class.java)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSubscriber<Artist>() {
-                    override fun onNext(artist: Artist) {
-                        setupArtist(artist)
-                        searchTracks(artist)
-                    }
-
-                    override fun onError(t: Throwable) {
-
-                    }
-
-                    override fun onComplete() {
-
-                    }
-
-                })
-    }
-
     private fun searchTracks(artist: Artist){
+        progressBar.visibility = View.VISIBLE
         Flowable.just(artist.name)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -133,10 +99,14 @@ class PrepareFragment : Fragment() {
                 .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
+                        progressBar.visibility = View.GONE
+                        buttonStart.isClickable = true
                     }
 
                     override fun onError(e: Throwable) {
-
+                        Toast.makeText(this@PrepareFragment.context, "出現錯誤" ,Toast.LENGTH_LONG).show()
+                        progressBar.visibility = View.VISIBLE
+                        buttonStart.isClickable = false
                     }
 
                 })

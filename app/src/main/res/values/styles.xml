@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomProgressBar" parent="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small">
+        <item name="android:colorAccent">@android:color/white</item>
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
 </resources>

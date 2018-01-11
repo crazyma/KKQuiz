@@ -3,8 +3,7 @@ package com.beibeilab.kkquiz.Utils
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
-import android.transition.Fade
-
+import android.transition.*
 
 
 /**
@@ -20,7 +19,8 @@ class FragmentUtils {
         val FRAGMENT_TAG_PREPARE = "prepare"
         val FRAGMENT_TAG_RESULT = "result"
 
-        val FADE_DEFAULT_TIME: Long = 1000
+        val FADE_DEFAULT_TIME: Long = 500
+        val EXPLODE_DEFAULT_TIME: Long = 300
 
         fun setupFragment(activity: FragmentActivity, fragment: Fragment, layoutID: Int) {
             // TODO("Think about how to improve this class by Dagger2")
@@ -61,6 +61,26 @@ class FragmentUtils {
             fragmentTransaction.addToBackStack(backStackName)
             fragmentTransaction.commit()
         }
+
+        fun switchFragmentWithExplode(activity: FragmentActivity, previousFragment: Fragment, nextFragment: Fragment, layoutID: Int, backStackName: String? = null) {
+            val fragmentManager = activity.supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+
+            val exitFade = Explode()
+            exitFade.duration = EXPLODE_DEFAULT_TIME
+            previousFragment.exitTransition = exitFade
+
+
+            val enterFade = Fade()
+            enterFade.startDelay = EXPLODE_DEFAULT_TIME
+            enterFade.duration = FADE_DEFAULT_TIME
+            nextFragment.enterTransition = enterFade
+
+            fragmentTransaction.replace(layoutID, nextFragment)
+            fragmentTransaction.addToBackStack(backStackName)
+            fragmentTransaction.commit()
+        }
+
 
         fun backFragment(activity: FragmentActivity, tag: String) {
             val fm = activity.supportFragmentManager

@@ -1,11 +1,15 @@
 package com.beibeilab.kkquiz
 
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
@@ -53,15 +57,34 @@ class PrepareFragment : DisposableFragment() {
         setupKKboxApiClient()
         setupArtist(artist)
         searchTracks(artist)
-        buttonStart.setOnClickListener {
-            jump2PlayPage()
-        }
     }
 
     private fun setupKKboxApiClient() {
         //  TODO("Need Dagger 2 here")
         val api = Api(BuildConfig.KKBOX_ACCESS_TOKEN, "TW", context)
         searchFetcher = api.searchFetcher
+    }
+
+    private fun setupButtonEvent() {
+        buttonStart.setOnClickListener { v ->
+            revealRippleView(v)
+        }
+    }
+
+    private fun revealRippleView(view :View) {
+        val cx = (view.x + view.width/2).toInt()
+        val cy = (view.y + view.height/2).toInt()
+        val finalRadius = Math.max(rippleView.width, rippleView.height)
+        val anim = ViewAnimationUtils.createCircularReveal(rippleView, cx, cy, 0f, finalRadius.toFloat())
+        rippleView.visibility = View.VISIBLE
+        anim.duration = 500
+        anim.interpolator = AccelerateInterpolator()
+        anim.addListener(object : AnimatorListenerAdapter(){
+            override fun onAnimationEnd(p0: Animator?) {
+                jump2PlayPage()
+            }
+        })
+        anim.start()
     }
 
     private fun searchTracks(artist: Artist) {
@@ -99,13 +122,14 @@ class PrepareFragment : DisposableFragment() {
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
                         progressBar.visibility = View.GONE
-                        buttonStart.isClickable = true
+                        setupButtonEvent()
                     }
 
                     override fun onError(e: Throwable) {
                         Toast.makeText(this@PrepareFragment.context, "出現錯誤", Toast.LENGTH_LONG).show()
                         progressBar.visibility = View.VISIBLE
                         buttonStart.isClickable = false
+                        buttonStart.isEnabled = false
                     }
 
                 })
@@ -113,8 +137,9 @@ class PrepareFragment : DisposableFragment() {
     }
 
     private fun jump2PlayPage() {
-        FragmentUtils.switchFragment(
+        FragmentUtils.switchFragmentWithFade(
                 activity,
+                this,
                 PlayPageFragment.newInstance(artist.name, trackList),
                 R.id.fragment_content,
                 FragmentUtils.FRAGMENT_TAG_PREPARE

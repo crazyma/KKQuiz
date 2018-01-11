@@ -38,6 +38,7 @@ class PlayPageFragment : Fragment() {
     companion object {
         val urlGithubSample = "https://wubaibai.github.io/kkGame/?song=OseG-8qU8UtszwJlXm&song=4ql_l_98WUFosMGFiW&autoplay=true"
         val urlGithub = "https://wubaibai.github.io/kkGame/?autoplay=true"
+        val urlKKBoxWidget = "https://widget.kkbox.com/v1/?type=song&terr=TW&autoplay=true&loop=false"
         val BLANK_PAGE = "about:blank"
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
@@ -157,8 +158,8 @@ class PlayPageFragment : Fragment() {
 
     private fun getWidgetUrl(id: String): String {
         val stringBuilder = StringBuilder()
-        stringBuilder.append(urlGithub)
-        stringBuilder.append("&song=")
+        stringBuilder.append(urlKKBoxWidget)
+        stringBuilder.append("&id=")
         stringBuilder.append(id)
 
         return stringBuilder.toString()

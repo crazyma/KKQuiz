@@ -8,13 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.beibeilab.kkquiz.R.id.progressBar
 import com.beibeilab.kkquiz.Utils.FragmentUtils
+import com.beibeilab.kkquiz.base.DisposableFragment
 import com.beibeilab.kkquiz.model.Artist
 import com.google.gson.Gson
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.SearchFetcher
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.content_search.*
@@ -23,7 +26,7 @@ import kotlinx.android.synthetic.main.content_search.*
 /**
  * A simple [Fragment] subclass.
  */
-class SearchFragment : Fragment() {
+class SearchFragment : DisposableFragment() {
 
     companion object {
         fun newInstance(): SearchFragment {
@@ -69,7 +72,7 @@ class SearchFragment : Fragment() {
     private fun searchArtist(string: String) {
         searchButton.isClickable = false
         progressBar.visibility = View.VISIBLE
-        Flowable.just(string)
+        val disposable = Flowable.just(string)
                 .subscribeOn(Schedulers.io())
                 .map {
                     searchFetcher.setSearchCriteria(it, "artist")
@@ -88,7 +91,6 @@ class SearchFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSubscriber<Artist>() {
                     override fun onNext(artist: Artist) {
-                        Log.d("crazyma", "!!!!!!!  " + artist.id + " " + artist.name + " " + artist.images.last().url)
                         jump2PreparePage(artist)
                     }
 
@@ -105,49 +107,10 @@ class SearchFragment : Fragment() {
 
                 })
 
-
-//        Flowable.just(string)
-//                .subscribeOn(Schedulers.io())
-//                .map {
-//                    searchFetcher.setSearchCriteria(it, "track")
-//                            .fetchSearchResult(50)
-//                            .get()
-//                }
-//                .map {
-//                    it.getAsJsonObject("tracks").getAsJsonArray("data").toString()
-//                }
-//                .map(Function<String, List<Track>> { t ->
-//                    val gson = Gson()
-//                    val type = object : TypeToken<List<Track>>() {}.type
-//                    gson.fromJson(t, type)
-//                })
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeWith(object : DisposableSubscriber<List<Track>>() {
-//
-//                    override fun onNext(trackList: List<Track>?) {
-//                        Log.d("crazyma", "track " + trackList!![0].name)
-//                        Log.d("crazyma", "track " + trackList!![1].name)
-//                        jump2PlayPage(trackList)
-//                    }
-//
-//                    override fun onComplete() {
-//
-//                    }
-//
-//                    override fun onError(t: Throwable?) {
-//
-//                    }
-//                })
+        compositeDisposable.add(disposable)
     }
 
-//    private fun setupArtist(artist: Artist) {
-//        artistText.text = artist.name
-//        Picasso.with(context)
-//                .load(artist.images.last().url)
-//                .into(artistImage)
-//    }
-
-    private fun jump2PreparePage(artist: Artist){
+    private fun jump2PreparePage(artist: Artist) {
         FragmentUtils.switchFragment(
                 activity,
                 PrepareFragment.newInstance(artist),

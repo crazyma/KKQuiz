@@ -21,6 +21,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.fragment_prepare.*
 import com.beibeilab.kkquiz.Utils.FragmentUtils
+import com.beibeilab.kkquiz.base.DisposableFragment
 import io.reactivex.observers.DisposableSingleObserver
 import java.util.*
 
@@ -28,16 +29,16 @@ import java.util.*
 /**
  * A simple [Fragment] subclass.
  */
-class PrepareFragment : Fragment() {
+class PrepareFragment : DisposableFragment() {
 
     companion object {
-        fun newInstance(artist: Artist): PrepareFragment{
+        fun newInstance(artist: Artist): PrepareFragment {
             val fragment = PrepareFragment()
             fragment.artist = artist
             return fragment
         }
 
-        val LOOP_COUNT:Long = 5
+        val LOOP_COUNT: Long = 5
     }
 
     lateinit var searchFetcher: SearchFetcher
@@ -54,7 +55,7 @@ class PrepareFragment : Fragment() {
         setupKKboxApiClient()
         setupArtist(artist)
         searchTracks(artist)
-        buttonStart.setOnClickListener{
+        buttonStart.setOnClickListener {
             jump2PlayPage()
         }
     }
@@ -65,9 +66,9 @@ class PrepareFragment : Fragment() {
         searchFetcher = api.searchFetcher
     }
 
-    private fun searchTracks(artist: Artist){
+    private fun searchTracks(artist: Artist) {
         progressBar.visibility = View.VISIBLE
-        Flowable.just(artist.name)
+        val disposable = Flowable.just(artist.name)
                 .subscribeOn(Schedulers.io())
                 .map {
                     searchFetcher.setSearchCriteria(it, "track")
@@ -79,11 +80,11 @@ class PrepareFragment : Fragment() {
                             .getAsJsonArray("data")
                             .toString()
                 }
-                .map{
+                .map {
                     val gson = Gson()
                     gson.fromJson<List<Track>>(it, object : TypeToken<List<Track>>() {}.type)
                 }
-                .map{
+                .map {
                     Collections.shuffle(it)
                     it
                 }
@@ -96,7 +97,7 @@ class PrepareFragment : Fragment() {
                 .take(PrepareFragment.LOOP_COUNT)
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<List<Track>>(){
+                .subscribeWith(object : DisposableSingleObserver<List<Track>>() {
                     override fun onSuccess(list: List<Track>) {
                         trackList = list
                         progressBar.visibility = View.GONE
@@ -104,13 +105,13 @@ class PrepareFragment : Fragment() {
                     }
 
                     override fun onError(e: Throwable) {
-                        Toast.makeText(this@PrepareFragment.context, "出現錯誤" ,Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@PrepareFragment.context, "出現錯誤", Toast.LENGTH_LONG).show()
                         progressBar.visibility = View.VISIBLE
                         buttonStart.isClickable = false
                     }
 
                 })
-
+        compositeDisposable.add(disposable)
     }
 
     private fun jump2PlayPage() {

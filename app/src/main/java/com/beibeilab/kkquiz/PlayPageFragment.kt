@@ -4,7 +4,6 @@ package com.beibeilab.kkquiz
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,18 +13,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.beibeilab.kkquiz.Utils.FragmentUtils
-import com.beibeilab.kkquiz.model.Album
 import com.beibeilab.kkquiz.model.Track
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
-import com.google.gson.Gson
 import com.kkbox.openapideveloper.api.Api
 import com.kkbox.openapideveloper.api.TrackFetcher
 import com.squareup.picasso.Picasso
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.fragment_play_page.*
 import java.lang.StringBuilder
 
@@ -149,11 +142,17 @@ class PlayPageFragment : Fragment() {
 
     }
 
-    private fun getSelectedTrack(index: Int) {
+    private fun setupSelectedTrack(index: Int) {
         selectedTrackId = trackList[index].id
         selectedTrackName = trackList[index].name
 
         trackNameText.text = selectedTrackName
+
+        val album = trackList[index].album
+        albumText.text = album.name
+        Picasso.with(this@PlayPageFragment.context)
+                .load(album.images[album.images.size - 1].url)
+                .into(albumImage)
     }
 
     private fun getWidgetUrl(id: String): String {
@@ -171,14 +170,14 @@ class PlayPageFragment : Fragment() {
                 includePlay.visibility = View.VISIBLE
                 includeAnswer.visibility = View.GONE
 
-                getSelectedTrack(index++)
+                setupSelectedTrack(index++)
 
-                loadTrackInfo(selectedTrackId)
                 loadMusicUrl(getWidgetUrl(selectedTrackId))
             }
             LAYOUT_ANSWER -> {
                 includePlay.visibility = View.GONE
                 includeAnswer.visibility = View.VISIBLE
+
                 loadMusicUrl(BLANK_PAGE)
             }
         }
@@ -187,47 +186,6 @@ class PlayPageFragment : Fragment() {
     private fun setupKKBoxClint() {
         trackFetcher = Api(BuildConfig.KKBOX_ACCESS_TOKEN, "TW", context)
                 .trackFetcher
-    }
-
-    private fun loadTrackInfo(id: String) {
-        val result = trackFetcher.setTrackId(id)
-                .fetchMetadata()
-                .get()
-
-        Log.d("crazyma", "result : $result")
-
-
-        Flowable.just(id)
-                .subscribeOn(Schedulers.io())
-                .map {
-                    trackFetcher.setTrackId(id)
-                            .fetchMetadata()
-                            .get()
-                }
-                .map {
-                    it.getAsJsonObject("album")
-                }
-                .map {
-                    val gson = Gson()
-                    gson.fromJson(it, Album::class.java)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSubscriber<Album>() {
-                    override fun onNext(t: Album) {
-                        albumText.text = t.name
-                        Picasso.with(this@PlayPageFragment.context)
-                                .load(t.images[t.images.size - 1].url)
-                                .into(albumImage)
-                    }
-
-                    override fun onError(t: Throwable?) {
-
-                    }
-
-                    override fun onComplete() {
-
-                    }
-                })
     }
 
 }// Required empty public constructor

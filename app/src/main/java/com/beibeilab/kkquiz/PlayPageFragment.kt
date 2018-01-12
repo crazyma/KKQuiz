@@ -81,6 +81,11 @@ class PlayPageFragment : Fragment() {
         showLayout(LAYOUT_PLAY)
     }
 
+    override fun onStop() {
+        super.onStop()
+        webView.loadUrl(BLANK_PAGE)
+    }
+
     private fun findViews(view: View) {
         webView = view.findViewById(R.id.webView)
         checkAnswerButton = view.findViewById(R.id.buttonCheckAnswer)

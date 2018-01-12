@@ -6,6 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowBackground">@color/colorPrimary</item>
+
+
+        <item name="android:windowEnterTransition">@transition/activity_transition</item>
+        <item name="android:windowExitTransition">@transition/activity_transition</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+
+        //是否覆盖执行，其实可以理解成是否同步执行还是顺序执行
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
     </style>
 
     <style name="CustomProgressBar" parent="@android:style/Widget.DeviceDefault.Light.ProgressBar.Small">

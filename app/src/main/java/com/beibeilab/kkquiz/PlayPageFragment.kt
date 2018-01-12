@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.beibeilab.kkquiz.Utils.FragmentUtils
+import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
@@ -35,10 +36,10 @@ class PlayPageFragment : Fragment() {
         val BLANK_PAGE = "about:blank"
         val LAYOUT_PLAY = 1
         val LAYOUT_ANSWER = 2
-        fun newInstance(artistString: String, trackList: List<Track>): PlayPageFragment {
+        fun newInstance(artist: Artist, trackList: List<Track>): PlayPageFragment {
             val fragment = PlayPageFragment()
             fragment.trackList = trackList
-            fragment.artistString = artistString
+            fragment.artist = artist
             return fragment
         }
     }
@@ -49,7 +50,7 @@ class PlayPageFragment : Fragment() {
 
     private lateinit var selectedTrackId: String
     private lateinit var selectedTrackName: String
-    lateinit var artistString: String
+    lateinit var artist: Artist
 
 
     private lateinit var trackFetcher: TrackFetcher
@@ -110,7 +111,7 @@ class PlayPageFragment : Fragment() {
             } else {
                 FragmentUtils.switchFragment(
                         this@PlayPageFragment.activity,
-                        ResultFragment.newInstance(artistString),
+                        ResultFragment.newInstance(artist),
                         R.id.fragment_content,
                         FragmentUtils.FRAGMENT_TAG_PLAY)
             }

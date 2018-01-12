@@ -1,9 +1,22 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context="com.beibeilab.kkquiz.PlayPageFragment">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"/>
+
+    <View
+        android:layout_width="124dp"
+        android:layout_height="124dp"
+        android:background="@color/colorPrimary"
+        android:layout_centerInParent="true"/>
 
     <include
         android:id="@+id/includePlay"
@@ -19,4 +32,4 @@
         layout="@layout/content_answer"/>
 
 
-</FrameLayout>
+</RelativeLayout>

@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.beibeilab.kkquiz.PrepareFragment.Companion.LOOP_COUNT
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
@@ -65,6 +66,7 @@ class PlayPageFragment : Fragment() {
     private lateinit var albumImage: ImageView
     private lateinit var leftRippleImage: ImageView
     private lateinit var rightRippleImage: ImageView
+    private lateinit var countText: TextView
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -96,6 +98,7 @@ class PlayPageFragment : Fragment() {
         albumImage = view.findViewById(R.id.imageAlbum)
         leftRippleImage = view.findViewById(R.id.imageLeftRipple)
         rightRippleImage = view.findViewById(R.id.imageRightRipple)
+        countText = view.findViewById(R.id.textCount)
     }
 
     private fun setupClickEvent() {
@@ -123,6 +126,14 @@ class PlayPageFragment : Fragment() {
         webView.settings.javaScriptEnabled = true
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.webChromeClient = WebChromeClient()
+    }
+
+    private fun setupCountText() {
+        val builder = StringBuilder()
+        builder.append(index)
+        builder.append(" / ")
+        builder.append(LOOP_COUNT)
+        countText.text = builder.toString()
     }
 
     private fun loadMusicUrl(urlString: String) {
@@ -177,7 +188,7 @@ class PlayPageFragment : Fragment() {
                 includeAnswer.visibility = View.GONE
 
                 setupSelectedTrack(index++)
-
+                setupCountText()
                 loadMusicUrl(getWidgetUrl(selectedTrackId))
             }
             LAYOUT_ANSWER -> {

@@ -9,4 +9,4 @@
 
 
 1. 叫記得 在 build.gradle 加上: `implementation 'com.koushikdutta.ion:ion:2.2.1'`
-2. 在呼叫 `api.searchFetcher`要先設定 **q** `api.searchFetcher.setSearchCriteria(q="Happy")`
+2. 在呼叫 `api.searchFetcher`要先設定 **q**: `api.searchFetcher.setSearchCriteria(q="Happy")`

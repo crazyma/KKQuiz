@@ -58,7 +58,9 @@
         android:layout_marginBottom="24dp"
         android:layout_marginEnd="62dp"
         android:layout_marginStart="62dp"
+        android:background="@drawable/btn_blue"
         android:text="@string/result_kkbox"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/buttonPlayAgain"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

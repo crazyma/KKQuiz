@@ -140,7 +140,6 @@ class PrepareFragment : DisposableFragment() {
     private fun jump2PlayPage() {
         FragmentUtils.switchFragmentWithFade(
                 activity,
-                this,
                 PlayPageFragment.newInstance(artist, trackList),
                 R.id.fragment_content,
                 FragmentUtils.FRAGMENT_TAG_PREPARE

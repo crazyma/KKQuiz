@@ -3,8 +3,10 @@ package com.beibeilab.kkquiz
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.beibeilab.kkquiz.Utils.FragmentUtils
+import com.beibeilab.kkquiz.model.Artist
+import com.beibeilab.kkquiz.search.SearchFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SearchFragment.SearchFragmentListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,5 +29,14 @@ class MainActivity : AppCompatActivity() {
         }else{
             super.onBackPressed()
         }
+    }
+
+    override fun onSearchFinished(artist: Artist) {
+        FragmentUtils.switchFragmentWithFade(
+                this,
+                PrepareFragment.newInstance(artist),
+                R.id.fragment_content,
+                FragmentUtils.FRAGMENT_TAG_SEARCH
+        )
     }
 }

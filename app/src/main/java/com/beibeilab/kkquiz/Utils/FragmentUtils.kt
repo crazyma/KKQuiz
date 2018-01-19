@@ -43,9 +43,10 @@ class FragmentUtils {
             fragmentTransaction.commit()
         }
 
-        fun switchFragmentWithFade(activity: FragmentActivity, previousFragment: Fragment, nextFragment: Fragment, layoutID: Int, backStackName: String? = null) {
+        fun switchFragmentWithFade(activity: FragmentActivity, nextFragment: Fragment, layoutID: Int, backStackName: String? = null) {
             val fragmentManager = activity.supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
+            val previousFragment = fragmentManager.findFragmentById(layoutID)
 
             val exitFade = Fade()
             exitFade.duration = FADE_DEFAULT_TIME

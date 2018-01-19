@@ -12,7 +12,7 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.beibeilab.kkquiz.PrepareFragment.Companion.LOOP_COUNT
+import com.beibeilab.kkquiz.prepare.PrepareFragment.Companion.LOOP_COUNT
 import com.beibeilab.kkquiz.Utils.FragmentUtils
 import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track

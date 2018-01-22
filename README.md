@@ -1,5 +1,8 @@
 這是一個簡單的猜歌遊戲，主要是使用 KKBOX SDK 進行開發
 
+## 更新(1/22)
+將 app 改成 MVP 架構
+
 ## 下載
 <a href='https://play.google.com/store/apps/details?id=com.beibeilab.kkquiz&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Google Play立即下載' src='https://play.google.com/intl/en_us/badges/images/generic/zh-tw_badge_web_generic.png'/></a>
 

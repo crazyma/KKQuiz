@@ -7,6 +7,7 @@ import com.beibeilab.kkquiz.model.Artist
 import com.beibeilab.kkquiz.model.Track
 import com.beibeilab.kkquiz.playpage.PlayPageFragment
 import com.beibeilab.kkquiz.prepare.PrepareFragment
+import com.beibeilab.kkquiz.result.ResultFragment
 import com.beibeilab.kkquiz.search.SearchFragment
 
 class MainActivity : AppCompatActivity(),
